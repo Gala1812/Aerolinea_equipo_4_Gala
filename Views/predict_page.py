@@ -1,19 +1,15 @@
 import streamlit as st
 import pickle
 import numpy as np
-from Connection import establish_connection
+import pandas as pd
+
 
 def load_model():
     with open('saved_steps.pkl', 'rb') as file:
-        my_pipeline = pickle.load(file)
-    return my_pipeline
+        pipeline = pickle.load(file)
+    return pipeline
 
-my_pipeline = load_model()
-
-model = my_pipeline["model"]
-#satisfaction_mapping = my_pipeline["satisfaction_mapping"]
-OH_enc = my_pipeline["OH_enc"]
-scaler = my_pipeline["scaler"]
+pipeline = load_model()
 
 def show_predict_page():
     st.title("Formulario satisfacción de clientes")
@@ -43,11 +39,11 @@ def show_predict_page():
 
     Gender = st.selectbox("Género", Gender)
     Customer_Type = st.selectbox("Tipo de cliente",  Customer_Type)
+    Age = st.slider("Edad", 0, 100, 1)
     Type_of_Travel = st.selectbox("Tipo de Viaje",  Type_of_Travel)
     Class = st.selectbox("Clase",  Class)
-
-    Age = st.slider("Edad", 0, 100, 1)
-    Flight_distance = st.slider("Distancia de vuelo", 0, 5000, 10)
+    
+    Flight_Distance = st.slider("Distancia de vuelo", 0, 5000, 10)
     Inflight_wifi_service = st.slider("Servicio wifi a bordo", 0, 5, 1)
     Departure_Arrival_time_convenient = st.slider("Hora de salida/llegada conveniente", 0, 5, 1)
     Ease_of_Online_booking = st.slider("Facilidad de reserva en línea", 0, 5, 1)
@@ -62,46 +58,67 @@ def show_predict_page():
     Checkin_service = st.slider("Servicio de Check-in", 0, 5, 1)
     Inflight_service = st.slider("Servicio a bordo", 0, 5, 1, key="inflight_service_slider")
     Cleanliness = st.slider("Limpieza", 0, 5, 1, key="Cleanliness_slider")
-    Departure_delay_minutes = st.slider("Retraso de salida en minutos", 0, 1600, 1)
-    Arrival_delay_minutes = st.slider("Retraso de llegada en minutos", 0, 1600, 1)
+    Departure_Delay_Minutes = st.slider("Retraso de salida en minutos", 0, 1600, 1)
+    Arrival_Delay_Minutes = st.slider("Retraso de llegada en minutos", 0, 1600, 1)
 
-
-    ok = st.button("Nivel de satisfacción")
-    if ok:
-        # bbdd
-        data = {
-            "id_passenger": Age,
-            "Gender" : Gender,
-            "Customer_Type" : Customer_Type,
-            "Type_of_Travel" : Type_of_Travel,
-            "Class" : Class,
-            "Age": Age,
-            "Flight_distance": Flight_distance,
-            "Inflight_wifi_service": Inflight_wifi_service,
-            "datc": Departure_Arrival_time_convenient,
-            "Ease_of_Online_booking": Ease_of_Online_booking,
-            "Gate_location": Gate_location,
-            "Food_and_drink": Food_and_drink,
-            "Online_boarding": Online_boarding,
-            "Seat_comfort": Seat_comfort,
-            "Inflight_entertainment": Inflight_entertainment,
-            "Onboard_service": Onboard_service,
-            "Leg_room_service": Leg_room_service,
-            "Baggage_handling": Baggage_handling,
-            "Checkin_service": Checkin_service,
-            "Inflight_service": Inflight_service,
-            "Cleanliness": Cleanliness,
-            "Departure_delay_minutes": Departure_delay_minutes,
-            "Arrival_delay_minutes": Arrival_delay_minutes,
+    column_mapping = {
+        'Gender': 'Gender',
+        'Customer Type': 'Customer Type',
+        'Age': 'Age',
+        'Type_of_Travel': 'Type of Travel',
+        'Class': 'Class',
+        'Flight Distance': 'Flight Distance',
+        'Inflight wifi service': 'Inflight wifi service',
+        'Departure/Arrival time convenient': 'Departure/Arrival time convenient',
+        'Ease of Online booking': 'Ease of Online booking',
+        'Gate location': 'Gate location',
+        'Food and drink': 'Food and drink',
+        'Online boarding': 'Online boarding',  
+        'Seat comfort': 'Seat comfort',  
+        'Inflight entertainment': 'Inflight entertainment',
+        'On-board service': 'On-board service',
+        'Leg room service': 'Leg room service',
+        'Baggage handling': 'Baggage handling',
+        'Checkin service': 'Checkin service',  
+        'Inflight service': 'Inflight service', 
+        'Cleanliness': 'Cleanliness',
+        'Departure Delay in Minutes': 'Departure Delay in Minutes',
+        'Arrival Delay in Minutes': 'Arrival Delay in Minutes'          
         }
-        establish_connection(data)
+        
+   
+    ok = st.button("Nivel de satisfacción")
 
+    if ok:
+        X = pd.DataFrame({
+            'Gender': [Gender],
+            'Customer Type': [Customer_Type],
+            'Age': [Age],
+            'Type of Travel': [Type_of_Travel],
+            'Class': [Class],
+            'Flight Distance': [Flight_Distance],
+            'Inflight wifi service': [Inflight_wifi_service],
+            'Departure/Arrival time convenient': [Departure_Arrival_time_convenient],
+            'Ease of Online booking': [Ease_of_Online_booking],
+            'Gate location': [Gate_location],
+            'Food and drink': [Food_and_drink],
+            'Online boarding': [Online_boarding],
+            'Seat comfort': [Seat_comfort],
+            'Inflight entertainment': [Inflight_entertainment],
+            'On-board service': [Onboard_service],
+            'Leg room service': [Leg_room_service],
+            'Baggage handling': [Baggage_handling],
+            'Checkin service': [Checkin_service],
+            'Inflight service': [Inflight_service],
+            'Cleanliness': [Cleanliness],
+            'Departure Delay in Minutes': [Departure_Delay_Minutes],
+            'Arrival Delay in Minutes': [Arrival_Delay_Minutes]
+        })
+        
+        X= X.rename(columns=column_mapping)
+        st.write(X)
 
-        X = np.array([[Gender, Customer_Type, Type_of_Travel, Class, Inflight_wifi_service, Departure_Arrival_time_convenient, Ease_of_Online_booking, Gate_location, Food_and_drink, Online_boarding, Seat_comfort, Inflight_entertainment, Onboard_service, Leg_room_service, Baggage_handling, Checkin_service, Inflight_service, Cleanliness, Age, Flight_distance, Departure_delay_minutes, Arrival_delay_minutes]])
-        #["Gender", "Customer Type", 'Type of Travel', 'Class', "Inflight wifi service", "Departure/Arrival time convenient", 'Ease of Online booking', 'Gate location', 'Food and drink', 'Online boarding', 'Seat comfort', 'Inflight entertainment', 'On-board service', 'Leg room service', 'Baggage handling', 'Checkin service', 'Inflight service', 'Cleanliness']
-        X[:,0:18] = OH_enc.transform(X[:,0:18])
-        X[:, 19:22] = scaler.transform(X[:,19:22])
-        #X = X.astype(float)
+    # Predict the satisfaction level
+        Nivel_de_satisfacción = pipeline.predict(X)
 
-        Nivel_de_satisfacción = model.predict(X)
-        st.subheader(f"Nivel de satisfacción es ${Nivel_de_satisfacción}")
+        st.subheader(f"Nivel de satisfacción: {'satisfecho' if Nivel_de_satisfacción == 1 else 'insatisfecho'}")
