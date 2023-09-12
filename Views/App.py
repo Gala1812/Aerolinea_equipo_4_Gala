@@ -2,12 +2,7 @@
 import streamlit as st
 import seaborn as sns
 import pandas as pd
-import matplotlib.pyplot as plt
-import streamlit.components.v1 as components
-import json
-import streamlit as st
-import time
-from predict_page import show_predict_page
+from Views.predict_page import show_predict_page
 
 # secciones
 page = st.sidebar.selectbox("Selecciona una página", ["Visualización de Datos", "Ingresar Datos"])

@@ -3,47 +3,80 @@ import pickle
 import numpy as np
 import pandas as pd
 
+# Define las opciones para los selectboxes
+Gender_Box = ["Male", "Female"]
+Customer_Type_Box = ["Loyal Customer", "Disloyal Customer"]
+Type_of_Travel_Box = ["Business travel", "Personal Travel"]
+Class_Box = ["Eco", "Eco Plus", "Business"]
 
-def load_model():
-    with open('saved_steps.pkl', 'rb') as file:
-        pipeline = pickle.load(file)
-    return pipeline
+# Crea un diccionario para almacenar los datos capturados
+data = {
+    'Gender': [],
+    'Customer Type': [],
+    'Age': [],
+    'Type of Travel': [],
+    'Class': [],
+    'Flight Distance': [],
+    'Inflight wifi service': [],
+    'Departure/Arrival time convenient': [],
+    'Ease of Online booking': [],
+    'Gate location': [],
+    'Food and drink': [],
+    'Online boarding': [],
+    'Seat comfort': [],
+    'Inflight entertainment': [],
+    'On-board service': [],
+    'Leg room service': [],
+    'Baggage handling': [],
+    'Checkin service': [],
+    'Inflight service': [],
+    'Cleanliness': [],
+    'Departure Delay in Minutes': [],
+    'Arrival Delay in Minutes': [],
+}
 
-pipeline = load_model()
+# Define la función que se ejecutará al presionar el botón
+def save_data(data, Gender, Customer_Type, Age, Type_of_Travel, Class,
+            Flight_distance, Inflight_wifi_service, Departure_Arrival_time_convenient,
+            Ease_of_Online_booking, Gate_location, Food_and_drink, Online_boarding,
+            Seat_comfort, Inflight_entertainment, Onboard_service, Leg_room_service,
+            Baggage_handling, Checkin_service, Inflight_service, Cleanliness,
+            Departure_delay_minutes, Arrival_delay_minutes):
+    data['Gender'].append(Gender)
+    data['Customer Type'].append(Customer_Type)
+    data['Age'].append(Age)
+    data['Type of Travel'].append(Type_of_Travel)
+    data['Class'].append(Class)
+    data['Flight Distance'].append(Flight_distance)
+    data['Inflight wifi service'].append(Inflight_wifi_service)
+    data['Departure/Arrival time convenient'].append(Departure_Arrival_time_convenient)
+    data['Ease of Online booking'].append(Ease_of_Online_booking)
+    data['Gate location'].append(Gate_location)
+    data['Food and drink'].append(Food_and_drink)
+    data['Online boarding'].append(Online_boarding)
+    data['Seat comfort'].append(Seat_comfort)
+    data['Inflight entertainment'].append(Inflight_entertainment)
+    data['On-board service'].append(Onboard_service)
+    data['Leg room service'].append(Leg_room_service)
+    data['Baggage handling'].append(Baggage_handling)
+    data['Checkin service'].append(Checkin_service)
+    data['Inflight service'].append(Inflight_service)
+    data['Cleanliness'].append(Cleanliness)
+    data['Departure Delay in Minutes'].append(Departure_delay_minutes)
+    data['Arrival Delay in Minutes'].append(Arrival_delay_minutes)
+    
+    return data
 
 def show_predict_page():
-    st.title("Formulario satisfacción de clientes")
+    st.title("Encuesta de satisfacción de clientes")
 
-    st.write("""### Por favor complete nuestra encuesta para evaluar la calidad de nuestros servicios.""")
-    st.subheader("Le llevará un máximo de 10 minutos y nos ayudará a mejorar la calidad de los servicios que brindamos.")
-
-
-    Gender  = (
-        "Mujer",
-        "Hombre",
-    )
-
-    Customer_Type = (
-        "cliente leal",
-        "cliente desleal",
-    )
-    Type_of_Travel = ( 
-        'Viaje Personal',
-        'Viaje de Negocio',
-    )
-    Class = (
-        'Business', 
-        'Eco', 
-        'Eco Plus',
-    )
-
-    Gender = st.selectbox("Género", Gender)
-    Customer_Type = st.selectbox("Tipo de cliente",  Customer_Type)
+    # Crea los elementos del formulario
+    Gender = st.selectbox("Género", Gender_Box)
+    Customer_Type = st.selectbox("Tipo de cliente", Customer_Type_Box)
     Age = st.slider("Edad", 0, 100, 1)
-    Type_of_Travel = st.selectbox("Tipo de Viaje",  Type_of_Travel)
-    Class = st.selectbox("Clase",  Class)
-    
-    Flight_Distance = st.slider("Distancia de vuelo", 0, 5000, 10)
+    Type_of_Travel = st.selectbox("Tipo de Viaje", Type_of_Travel_Box)
+    Class = st.selectbox("Clase", Class_Box)
+    Flight_distance = st.slider("Distancia de vuelo", 0, 5000, 10)
     Inflight_wifi_service = st.slider("Servicio wifi a bordo", 0, 5, 1)
     Departure_Arrival_time_convenient = st.slider("Hora de salida/llegada conveniente", 0, 5, 1)
     Ease_of_Online_booking = st.slider("Facilidad de reserva en línea", 0, 5, 1)
@@ -58,67 +91,50 @@ def show_predict_page():
     Checkin_service = st.slider("Servicio de Check-in", 0, 5, 1)
     Inflight_service = st.slider("Servicio a bordo", 0, 5, 1, key="inflight_service_slider")
     Cleanliness = st.slider("Limpieza", 0, 5, 1, key="Cleanliness_slider")
-    Departure_Delay_Minutes = st.slider("Retraso de salida en minutos", 0, 1600, 1)
-    Arrival_Delay_Minutes = st.slider("Retraso de llegada en minutos", 0, 1600, 1)
+    Departure_delay_minutes = st.slider("Retraso de salida en minutos", 0, 1600, 1)
+    Arrival_delay_minutes = st.slider("Retraso de llegada en minutos", 0, 1600, 1)
 
-    column_mapping = {
-        'Gender': 'Gender',
-        'Customer Type': 'Customer Type',
-        'Age': 'Age',
-        'Type_of_Travel': 'Type of Travel',
-        'Class': 'Class',
-        'Flight Distance': 'Flight Distance',
-        'Inflight wifi service': 'Inflight wifi service',
-        'Departure/Arrival time convenient': 'Departure/Arrival time convenient',
-        'Ease of Online booking': 'Ease of Online booking',
-        'Gate location': 'Gate location',
-        'Food and drink': 'Food and drink',
-        'Online boarding': 'Online boarding',  
-        'Seat comfort': 'Seat comfort',  
-        'Inflight entertainment': 'Inflight entertainment',
-        'On-board service': 'On-board service',
-        'Leg room service': 'Leg room service',
-        'Baggage handling': 'Baggage handling',
-        'Checkin service': 'Checkin service',  
-        'Inflight service': 'Inflight service', 
-        'Cleanliness': 'Cleanliness',
-        'Departure Delay in Minutes': 'Departure Delay in Minutes',
-        'Arrival Delay in Minutes': 'Arrival Delay in Minutes'          
-        }
+    # Crea el botón para guardar los datos
+    if st.button("Nivel de satisfacción"):
+        new_data = save_data(
+            data,
+            Gender,
+            Customer_Type,
+            Age,
+            Type_of_Travel,
+            Class,
+            Flight_distance,
+            Inflight_wifi_service,
+            Departure_Arrival_time_convenient,
+            Ease_of_Online_booking,
+            Gate_location,
+            Food_and_drink,
+            Online_boarding,
+            Seat_comfort,
+            Inflight_entertainment,
+            Onboard_service,
+            Leg_room_service,
+            Baggage_handling,
+            Checkin_service,
+            Inflight_service,
+            Cleanliness,
+            Departure_delay_minutes,
+            Arrival_delay_minutes,
+        )
         
-   
-    ok = st.button("Nivel de satisfacción")
+        # Load model
+        with open('../ML/model.pkl', 'rb') as file:
+            model = pickle.load(file)
 
-    if ok:
-        X = pd.DataFrame({
-            'Gender': [Gender],
-            'Customer Type': [Customer_Type],
-            'Age': [Age],
-            'Type of Travel': [Type_of_Travel],
-            'Class': [Class],
-            'Flight Distance': [Flight_Distance],
-            'Inflight wifi service': [Inflight_wifi_service],
-            'Departure/Arrival time convenient': [Departure_Arrival_time_convenient],
-            'Ease of Online booking': [Ease_of_Online_booking],
-            'Gate location': [Gate_location],
-            'Food and drink': [Food_and_drink],
-            'Online boarding': [Online_boarding],
-            'Seat comfort': [Seat_comfort],
-            'Inflight entertainment': [Inflight_entertainment],
-            'On-board service': [Onboard_service],
-            'Leg room service': [Leg_room_service],
-            'Baggage handling': [Baggage_handling],
-            'Checkin service': [Checkin_service],
-            'Inflight service': [Inflight_service],
-            'Cleanliness': [Cleanliness],
-            'Departure Delay in Minutes': [Departure_Delay_Minutes],
-            'Arrival Delay in Minutes': [Arrival_Delay_Minutes]
-        })
+        # Realiza la predicción
+        predict = model.predict(pd.DataFrame(new_data))
         
-        X= X.rename(columns=column_mapping)
-        st.write(X)
-
-    # Predict the satisfaction level
-        Nivel_de_satisfacción = pipeline.predict(X)
-
-        st.subheader(f"Nivel de satisfacción: {'satisfecho' if Nivel_de_satisfacción == 1 else 'insatisfecho'}")
+        # Guarda el ultimo dato ingresado
+        result = predict[-1]
+        
+        # limpia y vacia predict
+        predict = []
+        new_data = []
+        
+        # Muestra el resultado
+        st.success(f"El cliente está {'satisfecho 😍' if result == 1 else 'insatisfecho 🥺'}")
